@@ -1,0 +1,4 @@
+VentaID,Fecha,ClienteID,ProductoID,Cantidad,Ciudad,Sucursal,PrecioUnitario,CostoUnitario
+T1,2024-01-05,C1,A,2,Dallas,Dallas Downtown,10,6
+T1,2024-01-05,C1,B,1,Dallas,Dallas Downtown,20,10
+T2,2024-01-06,C2,A,1,Austin,Austin North,10,6

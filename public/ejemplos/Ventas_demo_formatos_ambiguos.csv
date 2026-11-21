@@ -1,0 +1,7 @@
+VentaID;Fecha;ClienteID;ProductoID;Cantidad;Ciudad;Sucursal;PrecioUnitario;CostoUnitario;VentaNeta
+V000001;03/04/2024;C00673;P032;1;Dallas;Dallas Downtown;15,46;6,95;1.546,00
+V000002;05/06/2024;C00453;P018;2;Houston;Houston Central;21,91;8,94;4.382,00
+V000003;07/08/2024;C00569;P035;2;Austin;Austin North;10,98;4,19;2.196,00
+V000004;02/01/2024;C00023;P004;2;Dallas;Dallas Downtown;15,20;5,26;3.040,00
+V000005;09/10/2024;C00989;P029;3;Austin;Austin North;17,02;6,05;5.106,00
+V000006;04/05/2024;C00552;P007;3;Austin;Austin South;15,07;6,15;4.295,00

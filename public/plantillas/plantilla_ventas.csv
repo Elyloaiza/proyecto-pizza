@@ -1,0 +1,2 @@
+﻿VentaID,Fecha,ClienteID,ProductoID,Cantidad,Ciudad,Sucursal,VentaNeta,PrecioUnitario,CostoUnitario,CostoTotal,DescuentoPct
+V000001,2024-01-28,C00673,P032,2,Dallas,Dallas Downtown,15.46,15.46,6.95,6.95,10

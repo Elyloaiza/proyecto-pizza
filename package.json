@@ -1,0 +1,37 @@
+{
+  "name": "sf-crust-pizza-bi",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Sistema académico de inteligencia de negocios para San Francisco Crust Pizza",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx scripts/dev.ts",
+    "build": "node scripts/build.mjs",
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test tests/*.test.ts",
+    "test:e2e": "node tests/e2e.mjs",
+    "vercel-build": "node scripts/build.mjs"
+  },
+  "dependencies": {
+    "d3-dsv": "^3.0.1",
+    "d3-scale": "^4.0.2",
+    "d3-shape": "^3.2.0",
+    "jszip": "^3.10.1",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@types/d3-dsv": "^3.0.7",
+    "@types/d3-scale": "^4.0.9",
+    "@types/d3-shape": "^3.0.7",
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "esbuild": "^0.25.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
