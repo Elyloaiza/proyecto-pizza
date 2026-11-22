@@ -1,5 +1,5 @@
 // Única Vercel Function del proyecto: POST /api/chat
-import { handleChat, type ChatEnv } from '../server/chat-core';
+import { handleChat, type ChatEnv } from '../server/chat-core.js';
 
 const json = (status: number, body: unknown) =>
   new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' } });
