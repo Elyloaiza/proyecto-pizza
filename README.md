@@ -63,11 +63,11 @@ Alternativa con Vercel CLI: `npx vercel dev` (lee `.env.local`).
 | `OPENCODE_MODEL` | ID real del modelo, **sin prefijo de proveedor** (la documentación usa p. ej. `claude-sonnet-5-5`). Consulte `GET https://opencode.ai/inference/v1/models` |
 | `AI_ENABLED` | `true` para activar el asistente; cualquier otro valor lo desactiva |
 | `OPENCODE_TOKEN_PARAM` (opc.) | `max_tokens` (por defecto) o `max_completion_tokens` si el modelo lo exige |
-| `OPENCODE_MAX_OUTPUT_TOKENS` (opc.) | Salida máxima, 1500 por defecto |
+| `OPENCODE_MAX_OUTPUT_TOKENS` (opc.) | Salida máxima, 2500 por defecto |
 
 La clave vive en `.env` o `.env.local` (ambos excluidos del control de versiones; `npm run dev` lee los dos y `.env.local` tiene prioridad) en local y en **Vercel → Project → Settings → Environment Variables** en producción; `api/chat.ts` la lee con `process.env`. Para comprobar credenciales y modelo: `node scripts/check-opencode.mjs`.
 
-**Presupuesto:** los límites de la app (una consulta simultánea, pregunta ≤ 2.000 caracteres, cuerpo ≤ 256 KiB, salida ≈ 1.500 tokens) **no son un límite global de gasto**. Configure el tope de gasto/saldo en OpenCode Console (workspace → billing/limits). La opción prevista es Console de pago por uso; no se asume que una suscripción OpenCode Go cubra este uso (su documentación la orienta a agentes de programación): verifique con el proveedor. Los modelos gratuitos solo funcionan dentro de OpenCode y otros clientes reciben HTTP 403.
+**Presupuesto:** los límites de la app (una consulta simultánea, pregunta ≤ 2.000 caracteres, cuerpo ≤ 256 KiB, salida ≈ 2.500 tokens) **no son un límite global de gasto**. Configure el tope de gasto/saldo en OpenCode Console (workspace → billing/limits). La opción prevista es Console de pago por uso; no se asume que una suscripción OpenCode Go cubra este uso (su documentación la orienta a agentes de programación): verifique con el proveedor. Los modelos gratuitos solo funcionan dentro de OpenCode: desde esta app responden con error (403, o 429 «Free usage limit reached»). Use un modelo de pago con saldo en Console (verificado en producción con `claude-sonnet-5-5`).
 
 ## Despliegue en Vercel (paso pendiente)
 

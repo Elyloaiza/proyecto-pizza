@@ -69,3 +69,15 @@ test('timeout', async () => {
   const g = (async () => { throw new Error('boom'); }) as unknown as typeof fetch;
   assert.equal(((await handleChat(body(), env, g)).body as any).code, 'network');
 });
+
+test('respuesta del modelo: JSON completo, con bloque de código y recortado', async () => {
+  const { parseAnswer } = await import('../src/lib/answer');
+  const full = parseAnswer('```json\n{"resumen":"ok","items":[{"tipo":"hallazgo","texto":"a","evidencias":["E5"]}],"datos_faltantes":null}\n```');
+  assert.equal(full?.items.length, 1);
+  assert.equal(full?.truncated, false);
+  const cut = parseAnswer('{"resumen":"r","items":[{"tipo":"hallazgo","texto":"a","evidencias":["E5"]},{"tipo":"recomendacion","texto":"b","evidencias":["E1"]},{"tipo":"hallazgo","texto":"incomp');
+  assert.equal(cut?.truncated, true);
+  assert.equal(cut?.items.length, 2);
+  assert.equal(cut?.items[1].tipo, 'recomendacion');
+  assert.equal(parseAnswer('texto libre sin json'), null);
+});

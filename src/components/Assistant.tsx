@@ -2,6 +2,8 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { contextKey, evidenceToMarkdown, type AiContext, type Evidence } from '../lib/context';
 import { fmtDateTime } from '../lib/format';
 import type { Filters } from '../lib/types';
+import { parseAnswer } from '../lib/answer';
+export { parseAnswer };
 
 export const SUGGESTED = [
   '¿Cuáles son los cinco hallazgos comerciales más importantes y qué evidencia los respalda?',
@@ -10,47 +12,6 @@ export const SUGGESTED = [
   '¿Qué segmento ofrece una oportunidad de crecimiento y por qué?',
   '¿Qué cinco decisiones comerciales propondrías y qué evidencia sustenta cada una?',
 ];
-
-interface AiItem {
-  tipo: 'hallazgo' | 'interpretacion' | 'recomendacion';
-  titulo?: string;
-  texto?: string;
-  evidencias: string[];
-  accion?: string;
-  justificacion?: string;
-  supuesto_limitacion?: string;
-}
-interface AiAnswer {
-  resumen?: string;
-  items: AiItem[];
-  datos_faltantes?: string | null;
-}
-
-export function parseAnswer(raw: string): AiAnswer | null {
-  let s = raw.trim().replace(/^```(?:json)?\s*/i, '').replace(/```\s*$/, '');
-  const a = s.indexOf('{');
-  const b = s.lastIndexOf('}');
-  if (a < 0 || b <= a) return null;
-  s = s.slice(a, b + 1);
-  try {
-    const j = JSON.parse(s);
-    if (!j || typeof j !== 'object') return null;
-    const items: AiItem[] = Array.isArray(j.items)
-      ? j.items.filter((i: unknown) => i && typeof i === 'object').map((i: any) => ({
-          tipo: ['hallazgo', 'interpretacion', 'recomendacion'].includes(i.tipo) ? i.tipo : 'hallazgo',
-          titulo: typeof i.titulo === 'string' ? i.titulo : undefined,
-          texto: typeof i.texto === 'string' ? i.texto : undefined,
-          evidencias: Array.isArray(i.evidencias) ? i.evidencias.map(String) : [],
-          accion: typeof i.accion === 'string' ? i.accion : undefined,
-          justificacion: typeof i.justificacion === 'string' ? i.justificacion : undefined,
-          supuesto_limitacion: typeof i.supuesto_limitacion === 'string' ? i.supuesto_limitacion : undefined,
-        }))
-      : [];
-    return { resumen: typeof j.resumen === 'string' ? j.resumen : undefined, items, datos_faltantes: typeof j.datos_faltantes === 'string' ? j.datos_faltantes : null };
-  } catch {
-    return null;
-  }
-}
 
 interface Msg {
   id: number;
@@ -296,6 +257,7 @@ function MessageView({ m, stale }: { m: Msg; stale: boolean }) {
             </div>
           ))}
           {ans.datos_faltantes && <p className="banner info flat"><strong>Datos faltantes:</strong> {ans.datos_faltantes}</p>}
+          {ans.truncated && <p className="banner warn flat">La respuesta llegó recortada por el límite de longitud: se muestran solo los puntos completos. Puede pedir que continúe o hacer una pregunta más concreta.</p>}
         </div>
       )}
       {m.role === 'assistant' && !m.error && !ans && (
