@@ -160,7 +160,7 @@ try {
   await page.locator('.btnchip', { hasText: 'E5' }).first().click();
   check('Se puede expandir la evidencia citada', (await page.locator('.evidence table tbody tr').count()) === 8);
   const last = await (await fetch('http://127.0.0.1:4010/_last')).json();
-  check('Proveedor recibe URL, clave y modelo definidos por el servidor', last.url === '/v1/chat/completions' && last.auth === 'Bearer sk-test-SECRETO' && last.body.model === 'mock-model' && last.body.max_tokens === 2500, JSON.stringify({ u: last.url, m: last.body.model }));
+  check('Proveedor recibe URL, clave y modelo definidos por el servidor', last.url === '/v1/chat/completions' && last.auth === 'Bearer sk-test-SECRETO' && last.body.model === 'mock-model' && last.body.max_tokens === 3000, JSON.stringify({ u: last.url, m: last.body.model }));
   const user = last.body.messages[1].content;
   check('Contexto enviado con filtros, versión, evidencias y sin datos de clientes', /<contexto_datos>/.test(user) && /"evidencias"/.test(user) && /version_datos/.test(user) && !/Sophia|Johnson|"C00001"/.test(user) && last.body.messages[0].role === 'system');
   const html = await page.content();
