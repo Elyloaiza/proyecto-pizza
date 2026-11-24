@@ -58,6 +58,8 @@ test('errores diferenciados del proveedor', async () => {
   assert.equal(await code(429), 'quota');
   assert.equal(await code(402), 'quota');
   assert.equal(await code(500), 'provider_error');
+  assert.equal(await code(400, { error: { message: 'max_tokens exceeds the limit' } }), 'provider_error');
+  assert.equal(await code(400, { error: { message: 'Insufficient balance' } }), 'quota');
   assert.equal(await code(200, { choices: [{ message: { content: '' } }] }), 'empty');
 });
 

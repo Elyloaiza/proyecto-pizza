@@ -107,11 +107,14 @@ export function buildMessages(p: ParsedBody): { role: 'system' | 'user'; content
 
 export function mapProviderStatus(status: number, providerMessage: string): ChatResult {
   const m = providerMessage.toLowerCase();
-  if (status === 401) return fail(502, 'invalid_key', 'El proveedor rechazó la clave de API (inválida o revocada). Revise OPENCODE_API_KEY.');
-  if (status === 403) return fail(502, 'forbidden', 'El proveedor denegó el acceso (403). La clave no tiene permiso para este modelo o el modelo gratuito no admite clientes externos.');
-  if (status === 402 || status === 429 || /quota|credit|insufficient|billing|balance|limit/.test(m)) return fail(502, 'quota', 'Cuota o saldo agotado en el proveedor (o límite de uso alcanzado). Revise el presupuesto en OpenCode Console.');
-  if (status === 404 || (status === 400 && /model/.test(m))) return fail(502, 'model_unavailable', 'El modelo configurado no está disponible para esta cuenta. Verifique OPENCODE_MODEL con GET /inference/v1/models.');
-  return fail(502, 'provider_error', `El proveedor respondió con un error (HTTP ${status}).`);
+  // Detalle del proveedor (sin secretos) para diagnosticar desde la interfaz
+  const detail = ` [HTTP ${status}${providerMessage ? ': ' + providerMessage.replace(/sk-[A-Za-z0-9_-]+/g, '***').slice(0, 220) : ''}]`;
+  if (status === 401) return fail(502, 'invalid_key', 'El proveedor rechazó la clave de API (inválida o revocada). Revise OPENCODE_API_KEY.' + detail);
+  if (status === 403) return fail(502, 'forbidden', 'El proveedor denegó el acceso. La clave no tiene permiso para este modelo o el modelo gratuito no admite clientes externos.' + detail);
+  if (status === 404 || /model/.test(m) && /not found|not available|unknown|invalid|unsupported|does not exist/.test(m)) return fail(502, 'model_unavailable', 'El modelo configurado no está disponible para esta cuenta. Verifique OPENCODE_MODEL con GET /inference/v1/models.' + detail);
+  if (status === 402 || /quota|credit|insufficient|billing|balance|payment/.test(m)) return fail(502, 'quota', 'Saldo o cuota agotados en el proveedor. Revise el saldo o el presupuesto en OpenCode Console.' + detail);
+  if (status === 429) return fail(502, 'quota', 'Límite de uso alcanzado en el proveedor (demasiadas solicitudes o cuota). Espere un momento o revise OpenCode Console.' + detail);
+  return fail(502, 'provider_error', 'El proveedor respondió con un error.' + detail);
 }
 
 export async function handleChat(rawBody: string, env: ChatEnv, fetchImpl: typeof fetch = fetch): Promise<ChatResult> {
@@ -147,6 +150,7 @@ export async function handleChat(rawBody: string, env: ChatEnv, fetchImpl: typeo
     }
     if (!res.ok) {
       const pm = typeof json?.error === 'string' ? json.error : typeof json?.error?.message === 'string' ? json.error.message : '';
+      console.warn(`[chat] proveedor HTTP ${res.status}: ${pm.replace(/sk-[A-Za-z0-9_-]+/g, '***').slice(0, 300)}`);
       return mapProviderStatus(res.status, pm);
     }
     const content = json?.choices?.[0]?.message?.content;
